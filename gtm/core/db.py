@@ -7,8 +7,14 @@ import sqlite3
 from pathlib import Path
 #--------------------------------------------------------------#
 
-ROOT = Path(__file__).resolve().parents[2]
-DB_PATH = Path(os.getenv("GTM_DB_PATH", ROOT / "data" "gtm.db"))
+def _find_root() -> Path:
+    for folder in Path(__file__).resolve().parents:
+        if (folder / "pyproject.toml").exists():
+            return folder 
+    raise RuntimeError("Couldn't find the repo root (no pyproject.toml found above above db.py)")
+
+ROOT = _find_root()
+DB_PATH = Path(os.getenv("GTM_DB_PATH") or ROOT / "data" / "gtm.db")
 
 def get_conn() -> sqlite3.Connection:
     conn = sqlite3.connect(DB_PATH)

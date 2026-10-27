@@ -33,7 +33,7 @@ def main():
         (ROOT / sub.format(n=name)).mkdir(parents=True, exist_ok=True)
 
     # 3. Adds a row in the clients table 
-    conn = get_conn
+    conn = get_conn()
     conn.execute(
         "INSERT INTO clients (name, config_path, created_at) VALUES (?, ?, ?) "
         "ON CONFLICT (name) DO NOTHING",
