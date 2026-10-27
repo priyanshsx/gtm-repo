@@ -1,0 +1,10 @@
+data/
+outputs/
+
+# secrets 
+.env
+
+# python 
+__pycache__/
+*.pyc
+.venv/
