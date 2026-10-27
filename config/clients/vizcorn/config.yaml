@@ -1,0 +1,43 @@
+client: vizcorn
+display_name: vizcorn
+template: b2b 
+
+# Confirm
+language: [en, de]
+
+offer: # todo
+
+positioning: # todo
+
+icp:
+  industries:
+    manufacturing:
+    distribution:
+    mining:
+  countries:
+    DE:
+    AT:
+    CH:
+    HU:
+  company_size: 
+    min:
+    max:
+    points:
+  titles:
+    # todo 
+
+signals:
+  # Todo 
+
+listening: 
+  # Todod
+
+content:
+  pillars: 
+    # Todo 
+
+compliance: 
+# Todo 
+
+
+
