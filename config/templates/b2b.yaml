@@ -1,0 +1,23 @@
+template: b2b
+
+llm:
+  max_items_per_run: 500
+
+scoring:
+  signal_half_life_days: 14
+  min_total_score: 50
+  list_size: 20
+
+market_intel:
+  backfill_weeks: 8
+  trend_baseline_weeks: 4
+  trend_min_ratio: 1.5
+
+content:
+  platforms: [linkedin]
+  posts_per_week: {linkedin: 3}
+
+messaging:
+  variants: 3
+  max_chars: 200
+  avoid_phrases: ["hope this finds you well", "synergy", "game-changer"]
