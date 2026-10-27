@@ -1,19 +1,15 @@
 #---------------------beginning-of-code------------------------#
 #--------------------------------------------------------------#
 
-# Imports libraries 
-from datetime import datetime, timezone
+# Imports libraries
 from gtm.core.db import ROOT, DB_PATH, get_conn
 #--------------------------------------------------------------#
 
-# Declares global variables 
+# Declares global variables: base folders only, no client folders
 FOLDERS = [
     "data/cache",
-    "data/inbox/vizcorn/linkedin",
-    "data/inbox/vizcorn/connections",
-    "outputs/vizcorn/briefs",
-    "outputs/vizcorn/people",
-    "outputs/vizcorn/drafts"
+    "data/inbox",
+    "outputs",
 ]
 #--------------------------------------------------------------#
 def main():
@@ -23,10 +19,6 @@ def main():
     schema = (ROOT / "db" / "schema.sql").read_text()
     conn = get_conn()
     conn.executescript(schema)
-    conn.execute(
-        "INSERT OR IGNORE INTO clients (name, config_path, created_at) VALUES (?, ?, ?)",
-        ("vizcorn", "config/clients/vizcorn/config.yaml", datetime.now(timezone.utc).isoformat())
-    )
     conn.commit()
     conn.close()
     print(f"Database ready at {DB_PATH}")
