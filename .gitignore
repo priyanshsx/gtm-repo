@@ -8,3 +8,7 @@ outputs/
 __pycache__/
 *.pyc
 .venv/
+
+# Client-specific configs, voice samples and test sets
+config/clients/*
+!config/clients/example/
