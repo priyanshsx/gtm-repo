@@ -9,9 +9,11 @@ CREATE TABLE IF NOT EXISTS companies (
   id INTEGER PRIMARY KEY,
   client_id INTEGER,
   name TEXT,
+  name_normalized TEXT,             -- lowercase, legal suffixes removed: "muller stanzteile"
   domain TEXT,
   linkedin_url TEXT,
   industry TEXT,
+  company_type TEXT,                -- supplier, partner, oem, consultancy, other
   country TEXT,
   employee_count INTEGER,
   erp_system TEXT,
@@ -19,7 +21,7 @@ CREATE TABLE IF NOT EXISTS companies (
   fit_score INTEGER,
   enriched_at TEXT,
   created_at TEXT,
-  UNIQUE (client_id, domain)
+  UNIQUE (client_id, name_normalized)
 );
 
 CREATE TABLE IF NOT EXISTS people (
@@ -29,14 +31,21 @@ CREATE TABLE IF NOT EXISTS people (
   full_name TEXT,
   title TEXT,
   seniority TEXT,
-  linkedin_url TEXT,
+  linkedin_url TEXT,                -- always stored normalized
   email TEXT,
   source TEXT,
   fit_score INTEGER,
   signal_score INTEGER,
+  warmth_score INTEGER,
   total_score INTEGER,
+  tier TEXT,                        -- A, B, C, D
+  connection_degree TEXT,           -- connected, 2nd, 3rd, none
+  mutual_connections TEXT,
+  status TEXT DEFAULT 'new',        -- review: new, suggested, approved, rejected
+  relationship_stage TEXT DEFAULT 'none',  -- none, engaging, requested, connected, talking, meeting
+  next_action TEXT,
+  next_action_due TEXT,
   reason TEXT,
-  status TEXT DEFAULT 'new',
   enriched_at TEXT,
   created_at TEXT,
   UNIQUE (client_id, linkedin_url)
@@ -51,7 +60,9 @@ CREATE TABLE IF NOT EXISTS signals (
   detail TEXT,
   source_url TEXT,
   points INTEGER,
-  detected_at TEXT
+  dedupe_key TEXT,                  -- built in code, e.g. type|source_url|company_id
+  detected_at TEXT,
+  UNIQUE (client_id, dedupe_key)
 );
 
 CREATE TABLE IF NOT EXISTS captures (
@@ -115,8 +126,13 @@ CREATE TABLE IF NOT EXISTS ideas (
 
 CREATE TABLE IF NOT EXISTS drafts (
   id INTEGER PRIMARY KEY,
-  idea_id INTEGER,
+  client_id INTEGER,
+  kind TEXT,                        -- post, message
+  idea_id INTEGER,                  -- for posts
+  person_id INTEGER,                -- for messages
+  team_member_id INTEGER,           -- who sends or posts it
   platform TEXT,
+  variant TEXT,                     -- message angle, e.g. signal, peer, give
   draft TEXT,
   final_text TEXT,
   status TEXT,
@@ -131,6 +147,39 @@ CREATE TABLE IF NOT EXISTS feedback (
   verdict TEXT,
   note TEXT,
   created_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS team_members (
+    id INTEGER PRIMARY KEY,
+    client_id INTEGER,
+    name TEXT,
+    linkedin_url TEXT,
+    role TEXT,
+    is_poster INTEGER DEFAULT 0,
+    UNIQUE (client_id, name)
+);
+
+CREATE TABLE IF NOT EXISTS connections (
+    id INTEGER PRIMARY KEY,
+    client_id INTEGER,
+    team_member_id INTEGER, 
+    person_id INTEGER,
+    connected_on TEXT,
+    messages_count INTEGER DEFAULT 0,
+    last_message_at TEXT,
+    UNIQUE (team_member_id, person_id)
+);
+
+CREATE TABLE IF NOT EXISTS interactions (
+    id INTEGER PRIMARY KEY,
+    team_member_id INTEGER,
+    client_id INTEGER,
+    person_id INTEGER,
+    type TEXT,
+    direction TEXT,
+    channel TEXT, 
+    content TEXT,
+    occurred_at TEXT 
 );
 
 CREATE TABLE IF NOT EXISTS llm_calls (
